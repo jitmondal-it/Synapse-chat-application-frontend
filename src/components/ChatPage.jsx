@@ -1031,7 +1031,7 @@ const ChatPage = () => {
                       <div className="mt-2">
 
                         <img
-                          src={`http://localhost:8080/api/v1/rooms/files/${message.fileId}`}
+                          src={`${baseURL}/api/v1/rooms/files/${message.fileId}`}
                           alt={message.fileName}
                           className="
                             max-w-[240px]
@@ -1071,7 +1071,7 @@ const ChatPage = () => {
                     ) : (
 
                       <a
-                        href={`http://localhost:8080/api/v1/rooms/files/${message.fileId}`}
+                        href={`${baseURL}/api/v1/rooms/files/${message.fileId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="
