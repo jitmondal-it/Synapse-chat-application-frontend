@@ -5,7 +5,7 @@ import {
   Search,
   Users,
   Bot,
-  Bell,
+  BriefcaseBusiness,
   Settings,
   User,
   MessagesSquare,
@@ -37,10 +37,10 @@ const menuItems = [
     icon: Bot,
   },
   {
-    id: "notifications",
-    label: "Notifications",
-    icon: Bell,
-  },
+  id: "aboutcreator",
+  label: "About creator",
+  icon: BriefcaseBusiness,
+}
 ];
 
 const bottomItems = [
@@ -77,6 +77,14 @@ export default function FloatingSidebar() {
     } catch (error) {
       console.error("Failed to load room members:", error);
     }
+  }
+
+  if (id === "aboutcreator") {
+    window.open(
+      "https://j-m-portfolio-tau.vercel.app/",
+      "_blank",
+      "noopener,noreferrer"
+    );
   }
 };
 
