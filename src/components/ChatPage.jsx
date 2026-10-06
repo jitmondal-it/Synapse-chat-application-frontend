@@ -18,8 +18,10 @@ import {
   LogOut,
   MessagesSquare,
   Trash2,
+  Smile
 } from "lucide-react";
 import FloatingSidebar from "./FloatingSidebar";
+import EmojiPicker from "emoji-picker-react";
 
 const ChatPage = () => {
   const {
@@ -44,6 +46,7 @@ const ChatPage = () => {
   const [typingUser, setTypingUser] = useState("");
   const [input, setInput] = useState("");
   const [stompClient, setStompClient] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // =========================================================
   // REDIRECT IF NOT CONNECTED
@@ -924,6 +927,23 @@ const ChatPage = () => {
         "
       >
 
+      {/* Doodle Background */}
+      <div
+        className="
+           sticky
+            top-0
+            h-screen
+            -mb-[100vh]
+            pointer-events-none
+            bg-[url('/chat-doodles.png')]
+            bg-repeat
+            bg-[length:420px_420px]
+            opacity-[0.12]
+        
+            z-0
+                "
+      />
+
         {/* =================================================
             MESSAGES
         ================================================== */}
@@ -938,6 +958,9 @@ const ChatPage = () => {
               key={index}
               className={`
                 flex
+                relative
+                z-10
+                animate-[messageIn_0.25s_ease-out]
                 ${isCurrentUser ? "justify-end" : "justify-start"}
                 mb-5
               `}
@@ -1364,31 +1387,21 @@ const ChatPage = () => {
             onClick={() => fileInputRef.current?.click()}
             className="
               flex-shrink-0
-
               h-11
               w-11
-
               rounded-full
-
               flex
               items-center
               justify-center
-
               bg-zinc-200
-
               text-zinc-600
-
               ring-1
               ring-zinc-300
-
               transition-all
               duration-300
-
               hover:bg-zinc-300
               hover:text-blue-600
-
               hover:rotate-[-8deg]
-
               hover:shadow-md
             "
           >
@@ -1401,6 +1414,32 @@ const ChatPage = () => {
             onChange={handleFileSelect}
             className="hidden"
           />
+
+          <button
+            type="button"
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-black/10 transition"
+          >
+            <Smile size={25} />
+          </button>
+
+          <div
+            className={`absolute bottom-20 right-[120px] z-50 origin-bottom-right transition-all duration-300 ease-out ${
+              showEmojiPicker
+                ? "opacity-100 scale-100 translate-y-0"
+                : "opacity-0 scale-95 translate-y-2 pointer-events-none"
+            }`}
+          >
+            <EmojiPicker
+              onEmojiClick={(emojiData) => {
+                setInput((prev) => prev + emojiData.emoji);
+                setShowEmojiPicker(false);
+              }}
+              theme="dark"
+              width={300}
+              height={350}
+            />
+          </div>
 
           {/* =================================================
               SEND BUTTON
