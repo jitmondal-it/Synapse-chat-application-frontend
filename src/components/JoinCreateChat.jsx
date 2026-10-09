@@ -95,7 +95,7 @@ const JoinCreateChat = () => {
 
 
 
-    <div className="flex flex-col items-center">
+    <div className="flex w-full max-w-[400px] flex-col items-center">
 
       {/* ================= MODE SWITCH ================= */}
 
@@ -104,20 +104,15 @@ const JoinCreateChat = () => {
         relative
         flex
         items-center
-
-        w-[400px]
+        w-full
+        max-w-[400px]
         h-[56px]
-
         p-1
         mb-7
-
         rounded-full
-
         border-2
         border-[#323232]
-
         bg-white
-
         shadow-[4px_4px_#323232]
       "
     >
@@ -129,7 +124,7 @@ const JoinCreateChat = () => {
       left-1
 
       h-[48px]
-      w-[196px]
+      w-[calc(50%-4px)]
 
       rounded-full
 
@@ -141,7 +136,7 @@ const JoinCreateChat = () => {
 
       ${
         isCreateRoom
-          ? "translate-x-[196px]"
+          ? "translate-x-full"
           : "translate-x-0"
       }
     `}
@@ -155,7 +150,8 @@ const JoinCreateChat = () => {
       relative
       z-10
 
-      w-[196px]
+      flex-1
+      min-w-0
       h-[48px]
 
       rounded-full
@@ -184,7 +180,8 @@ const JoinCreateChat = () => {
       relative
       z-10
 
-      w-[196px]
+     flex-1
+      min-w-0
       h-[48px]
 
       rounded-full
@@ -211,11 +208,11 @@ const JoinCreateChat = () => {
 
       <div
         className="
-          w-[400px]
-          h-[480px]
-
-          [perspective:1200px]
-        "
+        w-full
+        max-w-[400px]
+        h-[480px]
+        [perspective:1200px]
+      "
       >
 
         <div
@@ -252,7 +249,8 @@ const JoinCreateChat = () => {
               justify-center
               items-center
 
-              px-10
+              px-5
+              sm:px-10
 
               rounded-2xl
 
@@ -358,6 +356,7 @@ const JoinCreateChat = () => {
                   shadow-[4px_4px_#323232]
 
                   px-5
+                  
 
                   text-[15px]
                   font-semibold
@@ -473,7 +472,8 @@ const JoinCreateChat = () => {
               justify-center
               items-center
 
-              px-10
+              px-5
+              sm:px-10
 
               rounded-2xl
 

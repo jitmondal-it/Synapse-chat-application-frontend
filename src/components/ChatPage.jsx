@@ -18,7 +18,8 @@ import {
   LogOut,
   MessagesSquare,
   Trash2,
-  Smile
+  Smile,
+  MoreVertical,
 } from "lucide-react";
 import FloatingSidebar from "./FloatingSidebar";
 import EmojiPicker from "emoji-picker-react";
@@ -47,6 +48,7 @@ const ChatPage = () => {
   const [input, setInput] = useState("");
   const [stompClient, setStompClient] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showActionMenu, setShowActionMenu] = useState(false);
 
   // =========================================================
   // REDIRECT IF NOT CONNECTED
@@ -122,7 +124,7 @@ const ChatPage = () => {
           const newMessage = JSON.parse(message.body);
 
           setMessages((prev) => [...prev, newMessage]);
-        }
+        },
       );
 
       // -----------------------------------------------------
@@ -134,15 +136,12 @@ const ChatPage = () => {
         (message) => {
           const event = JSON.parse(message.body);
 
-          if (
-            event.typing &&
-            event.sender !== currentUser
-          ) {
+          if (event.typing && event.sender !== currentUser) {
             setTypingUser(event.sender);
           } else {
             setTypingUser("");
           }
-        }
+        },
       );
     });
 
@@ -191,7 +190,7 @@ const ChatPage = () => {
       JSON.stringify({
         sender: currentUser,
         typing: isTyping,
-      })
+      }),
     );
   };
 
@@ -273,7 +272,7 @@ const ChatPage = () => {
       stompClient.send(
         `/app/sendMessage/${roomId}`,
         {},
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
 
       setInput("");
@@ -316,7 +315,7 @@ const ChatPage = () => {
 
   const handleClearChat = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to clear all messages from this chat ?"
+      "Are you sure you want to clear all messages from this chat ?",
     );
 
     if (!confirmed) return;
@@ -339,7 +338,7 @@ const ChatPage = () => {
 
   const handleDeleteRoom = async () => {
     const confirmed = window.confirm(
-      `Are you sure you want to permanently delete the room "${roomId}"? This will also delete all messages and uploaded files.`
+      `Are you sure you want to permanently delete the room "${roomId}"? This will also delete all messages and uploaded files.`,
     );
 
     if (!confirmed) return;
@@ -390,7 +389,7 @@ const ChatPage = () => {
         stompClient.send(
           `/app/sendMessage/${roomId}`,
           {},
-          JSON.stringify(message)
+          JSON.stringify(message),
         );
       }
 
@@ -408,9 +407,11 @@ const ChatPage = () => {
   // =========================================================
 
   return (
-    <div className="min-h-screen bg-[#050914] text-white">
-
+    <div className="min-h-screen bg-[#050914] text-white ">
+     <div className="hidden sm:block">
       <FloatingSidebar />
+     </div>
+      
 
       {/* =====================================================
           FLOATING NAVBAR
@@ -424,18 +425,19 @@ const ChatPage = () => {
           -translate-x-1/2
           z-50
 
-          w-[calc(100%-24px)]
+          w-[calc(100%-16px)]
           sm:w-[780px]
           lg:w-[920px]
 
-          h-[72px]
-          px-4 sm:px-5
+          min-h-[64px]
+          h-auto
+          px-2 sm:px-5
+          py-2
 
           grid
-          grid-cols-[1fr_auto_1fr]
+          grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]
           items-center
-
-          rounded-2xl
+          gap-1 sm:gap-2
 
           bg-white/90
           backdrop-blur-2xl
@@ -447,41 +449,37 @@ const ChatPage = () => {
 
           transition-all
           duration-300
-        "
-      >
 
+          "
+      >
         {/* =================================================
             LEFT : ROOM
         ================================================== */}
 
-        <div className="flex items-center min-w-0">
-
+        <div className="col-start-1 flex items-center min-w-0">
           <div
             className="
-              h-10 w-10
+              h-8 w-8
+              sm:h-10 sm:w-10
               flex-shrink-0
-              rounded-xl
-
+              rounded-lg sm:rounded-xl
               bg-gradient-to-br
               from-blue-500
               to-indigo-600
-
               flex
               items-center
               justify-center
-
               shadow-[0_4px_14px_rgba(59,130,246,0.28)]
             "
           >
             <MessagesSquare
-              size={20}
+              size={18}
               strokeWidth={2.2}
               className="text-white"
             />
           </div>
 
           <div className="ml-3 min-w-0">
-
             <p
               className="
                 text-[9px]
@@ -501,15 +499,13 @@ const ChatPage = () => {
                 text-gray-800
                 truncate
 
-                max-w-[100px]
+                max-w-[90px]
                 sm:max-w-[150px]
               "
             >
               #{roomId}
             </p>
-
           </div>
-
         </div>
 
         {/* =================================================
@@ -517,9 +513,7 @@ const ChatPage = () => {
         ================================================== */}
 
         <div className="hidden sm:flex items-center justify-center">
-
           <div className="text-center">
-
             <h1
               className="
                 text-[17px]
@@ -543,9 +537,7 @@ const ChatPage = () => {
             >
               CONNECT • CHAT • SHARE
             </p>
-
           </div>
-
         </div>
 
         {/* =================================================
@@ -554,13 +546,14 @@ const ChatPage = () => {
 
         <div
           className="
+           col-start-3
             flex
             items-center
             justify-end
+            justify-self-end
             gap-2
           "
         >
-
           {/* User */}
 
           <div
@@ -572,7 +565,6 @@ const ChatPage = () => {
               pr-2
             "
           >
-
             <div
               className="
                 relative
@@ -617,7 +609,6 @@ const ChatPage = () => {
             </div>
 
             <div className="max-w-[90px]">
-
               <p
                 className="
                   text-[9px]
@@ -639,17 +630,116 @@ const ChatPage = () => {
               >
                 {currentUser}
               </p>
-
             </div>
-
           </div>
 
           {/* Divider */}
 
           <div className="hidden sm:block h-7 w-px bg-gray-200" />
 
-          {/* Leave */}
+          {/* Mobile Action Menu */}
+          <div className="relative sm:hidden">
+            <button
+              type="button"
+              onClick={() => setShowActionMenu((prev) => !prev)}
+              aria-label="Open chat actions"
+              aria-expanded={showActionMenu}
+              className="
+              h-9 w-9
+              flex items-center justify-center
+              rounded-xl
+              bg-gray-100
+              text-gray-600
+              border border-gray-200
+              transition-all duration-200
+              hover:bg-gray-200
+              active:scale-95
+            "
+            >
+              <MoreVertical size={20} />
+            </button>
 
+            {showActionMenu && (
+              <div
+              className="
+              absolute
+              right-0
+              top-12
+              z-[100]
+              w-44
+              overflow-hidden
+              rounded-xl
+              border border-gray-200
+              bg-white
+              p-1.5
+              shadow-[0_12px_35px_rgba(0,0,0,0.20)]
+              animate-[messageIn_0.2s_ease-out]
+            "
+              >
+                {/* Leave Room */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowActionMenu(false);
+                    handleLogout();
+                  }}
+                  className="
+                flex w-full items-center gap-3
+                rounded-lg px-3 py-2.5
+                text-sm font-medium text-gray-700
+                transition-colors
+                hover:bg-gray-100
+                active:bg-gray-200
+              "
+                >
+                  <LogOut size={17} />
+                  <span>Leave room</span>
+                </button>
+
+                {/* Clear Chat */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowActionMenu(false);
+                    handleClearChat();
+                  }}
+                  className="
+                flex w-full items-center gap-3
+                rounded-lg px-3 py-2.5
+                text-sm font-medium text-orange-600
+                transition-colors
+                hover:bg-orange-50
+                active:bg-orange-100
+              "
+                >
+                  <Trash2 size={17} />
+                  <span>Clear chat</span>
+                </button>
+
+                {/* Delete Room */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowActionMenu(false);
+                    handleDeleteRoom();
+                  }}
+                  className="
+          flex w-full items-center gap-3
+          rounded-lg px-3 py-2.5
+          text-sm font-medium text-red-600
+          transition-colors
+          hover:bg-red-50
+          active:bg-red-100
+        "
+                >
+                  <Trash2 size={17} />
+                  <span>Delete room</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Leave */}
           <button
             type="button"
             onClick={handleLogout}
@@ -659,7 +749,7 @@ const ChatPage = () => {
 
               h-9
               px-3
-
+              hidden sm:flex
               rounded-xl
 
               flex
@@ -693,9 +783,7 @@ const ChatPage = () => {
               "
             />
 
-            <span className="hidden lg:block">
-              Leave
-            </span>
+            <span className="hidden lg:block">Leave</span>
           </button>
 
           {/* Clear Chat */}
@@ -709,6 +797,7 @@ const ChatPage = () => {
               h-9 w-9
               rounded-xl
               flex items-center justify-center
+              hidden sm:flex
 
               bg-orange-50
               text-orange-500
@@ -726,7 +815,6 @@ const ChatPage = () => {
               hover:shadow-[0_8px_20px_rgba(249,115,22,0.22)]
             "
           >
-
             <span
               className="
                 pointer-events-none
@@ -766,7 +854,6 @@ const ChatPage = () => {
               "
             >
               Clear chat
-
               <span
                 className="
                   absolute
@@ -790,8 +877,9 @@ const ChatPage = () => {
 
                 group-hover:scale-110
               "
+              aria-hidden="true"
             />
-
+            <span className="sr-only">Clear chat</span>
           </button>
 
           {/* Delete Room */}
@@ -805,6 +893,7 @@ const ChatPage = () => {
               h-9 w-9
               rounded-xl
               flex items-center justify-center
+              hidden sm:flex
 
               bg-red-50
               text-red-400
@@ -822,7 +911,6 @@ const ChatPage = () => {
               hover:shadow-[0_8px_20px_rgba(239,68,68,0.22)]
             "
           >
-
             <span
               className="
                 pointer-events-none
@@ -862,7 +950,6 @@ const ChatPage = () => {
               "
             >
               Delete room
-
               <span
                 className="
                   absolute
@@ -887,9 +974,7 @@ const ChatPage = () => {
                 group-hover:scale-110
               "
             />
-
           </button>
-
         </div>
       </div>
 
@@ -926,46 +1011,40 @@ const ChatPage = () => {
           bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.10),transparent_38%),radial-gradient(circle_at_0%_50%,rgba(56,189,248,0.04),transparent_30%),radial-gradient(circle_at_100%_70%,rgba(99,102,241,0.04),transparent_30%)]
         "
       >
-
-      {/* Doodle Background */}
-      <div
-        className="
-           sticky
-            top-0
-            h-screen
-            -mb-[100vh]
+        {/* Doodle Background */}
+        <div
+          className="
+            absolute
+            inset-0
             pointer-events-none
             bg-[url('/chat-doodles.png')]
             bg-repeat
             bg-[length:420px_420px]
             opacity-[0.12]
-        
             z-0
-                "
-      />
+          "
+        />
 
         {/* =================================================
             MESSAGES
         ================================================== */}
 
         {messages.map((message, index) => {
-
-          const isCurrentUser =
-            message.sender === currentUser;
+          const isCurrentUser = message.sender === currentUser;
 
           return (
             <div
-              key={index}
-              className={`
-                flex
-                relative
-                z-10
-                animate-[messageIn_0.25s_ease-out]
-                ${isCurrentUser ? "justify-end" : "justify-start"}
-                mb-5
-              `}
+            key={index}
+            className={`
+              flex
+              relative
+              z-10
+              w-full
+              animate-[messageIn_0.25s_ease-out]
+              ${isCurrentUser ? "justify-end" : "justify-start"}
+              mb-5
+            `}
             >
-
               <div
                 className={`
                   flex
@@ -976,7 +1055,6 @@ const ChatPage = () => {
                   ${isCurrentUser ? "flex-row-reverse" : "flex-row"}
                 `}
               >
-
                 {/* Avatar */}
 
                 <div
@@ -1026,7 +1104,6 @@ const ChatPage = () => {
                     }
                   `}
                 >
-
                   {/* Sender */}
 
                   <p
@@ -1035,11 +1112,7 @@ const ChatPage = () => {
                       font-semibold
                       mb-1
 
-                      ${
-                        isCurrentUser
-                          ? "text-blue-100"
-                          : "text-blue-400"
-                      }
+                      ${isCurrentUser ? "text-blue-100" : "text-blue-400"}
                     `}
                   >
                     {message.sender}
@@ -1048,11 +1121,8 @@ const ChatPage = () => {
                   {/* Content */}
 
                   {message.messageType === "FILE" ? (
-
                     message.fileType?.startsWith("image/") ? (
-
                       <div className="mt-2">
-
                         <img
                           src={`${baseURL}/api/v1/rooms/files/${message.fileId}`}
                           alt={message.fileName}
@@ -1088,11 +1158,8 @@ const ChatPage = () => {
                         >
                           {message.fileName}
                         </p>
-
                       </div>
-
                     ) : (
-
                       <a
                         href={`${baseURL}/api/v1/rooms/files/${message.fileId}`}
                         target="_blank"
@@ -1118,26 +1185,24 @@ const ChatPage = () => {
                         <Paperclip size={15} />
                         {message.fileName}
                       </a>
-
                     )
-
                   ) : (
-
                     <p
-                      className="
-                        text-sm
-                        sm:text-[15px]
-
+                      className={`
                         leading-relaxed
-
                         break-words
-
+                        whitespace-pre-wrap
                         text-white
-                      "
+                        ${
+                          /^[\p{Emoji}\p{Emoji_Component}\s]+$/u.test(message.content) &&
+                          /\p{Emoji}/u.test(message.content)
+                            ? "text-3xl"
+                            : "text-sm sm:text-[15px]"
+                        }
+                      `}
                     >
                       {message.content}
                     </p>
-
                   )}
 
                   {/* Time */}
@@ -1147,20 +1212,13 @@ const ChatPage = () => {
                       text-[10px]
                       mt-1.5
 
-                      ${
-                        isCurrentUser
-                          ? "text-blue-100/70"
-                          : "text-gray-500"
-                      }
+                      ${isCurrentUser ? "text-blue-100/70" : "text-gray-500"}
                     `}
                   >
                     {timeAgo(message.timeStamp)}
                   </p>
-
                 </div>
-
               </div>
-
             </div>
           );
         })}
@@ -1171,7 +1229,6 @@ const ChatPage = () => {
 
         {typingUser && (
           <div className="flex items-center gap-2 mb-4 px-2">
-
             {/* Avatar */}
 
             <div
@@ -1222,7 +1279,6 @@ const ChatPage = () => {
                 shadow-lg
               "
             >
-
               <span
                 className="
                   text-xs
@@ -1235,7 +1291,6 @@ const ChatPage = () => {
               {/* Animated dots */}
 
               <span className="flex items-center gap-1">
-
                 <span
                   className="
                     h-1.5
@@ -1272,14 +1327,10 @@ const ChatPage = () => {
                     animate-bounce
                   "
                 />
-
               </span>
-
             </div>
-
           </div>
         )}
-
       </main>
 
       {/* =====================================================
@@ -1306,7 +1357,6 @@ const ChatPage = () => {
           to-transparent
         "
       >
-
         <div
           className="
             max-w-3xl
@@ -1338,7 +1388,6 @@ const ChatPage = () => {
             focus-within:shadow-[0_0_25px_rgba(59,130,246,0.2)]
           "
         >
-
           {/* =================================================
               MESSAGE INPUT
           ================================================== */}
@@ -1424,22 +1473,22 @@ const ChatPage = () => {
           </button>
 
           <div
-            className={`absolute bottom-20 right-[120px] z-50 origin-bottom-right transition-all duration-300 ease-out ${
-              showEmojiPicker
-                ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-95 translate-y-2 pointer-events-none"
-            }`}
-          >
-            <EmojiPicker
-              onEmojiClick={(emojiData) => {
-                setInput((prev) => prev + emojiData.emoji);
-                setShowEmojiPicker(false);
-              }}
-              theme="dark"
-              width={300}
-              height={350}
-            />
-          </div>
+          className={`absolute bottom-20 right-0 z-50 origin-bottom-right transition-all duration-300 ease-out ${
+          showEmojiPicker
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-2 pointer-events-none"
+        }`}
+        >
+        <EmojiPicker
+        onEmojiClick={(emojiData) => {
+          setInput((prev) => prev + emojiData.emoji);
+          setShowEmojiPicker(false);
+        }}
+        theme="dark"
+        width={Math.min(300, window.innerWidth - 32)}
+        height={350}
+      />
+</div>
 
           {/* =================================================
               SEND BUTTON
@@ -1491,11 +1540,8 @@ const ChatPage = () => {
               "
             />
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 };
