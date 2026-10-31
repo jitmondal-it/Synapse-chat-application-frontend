@@ -13,8 +13,15 @@ const JoinCreateChat = () => {
     userName: "",
   });
 
-  const { roomId, userName, setRoomId, setCurrentUser, setConnected } =
-    useChatContext();
+  const {
+    roomId,
+    userName,
+    setRoomId,
+    setCurrentUser,
+    setConnected,
+    setRoomMembers,
+    setRoomCreator,
+  } = useChatContext();
   const navigate = useNavigate();
 
   function handleFormInputChange(event) {
@@ -37,10 +44,18 @@ const JoinCreateChat = () => {
       //join chat
 
       try {
-        const room = await joinChatApi(detail.roomId,detail.userName);
+        const room = await joinChatApi(detail.roomId, detail.userName);
         toast.success("joined..");
         setCurrentUser(detail.userName);
         setRoomId(room.roomId);
+        if (room.members) {
+          setRoomMembers(room.members);
+        } else {
+          setRoomMembers([detail.userName]);
+        }
+        if (room.createdBy) {
+          setRoomCreator(room.createdBy);
+        }
         setConnected(true);
         navigate("/chat");
       } catch (error) {
@@ -61,12 +76,14 @@ const JoinCreateChat = () => {
       console.log(detail);
       // call api to create room on backend
       try {
-        const response = await createRoomApi(detail.roomId,detail.userName);
+        const response = await createRoomApi(detail.roomId, detail.userName);
         console.log(response);
         toast.success("Room Created Successfully !!");
         //join the room
         setCurrentUser(detail.userName);
         setRoomId(response.roomId);
+        setRoomMembers([detail.userName]);
+        setRoomCreator(detail.userName);
         setConnected(true);
 
         navigate("/chat");

@@ -6,6 +6,8 @@ export const ChatProvider = ({ children }) => {
   const [roomId, setRoomId] = useState("");
   const [currentUser, setCurrentUser] = useState("");
   const [connected, setConnected] = useState(false);
+  const [roomMembers, setRoomMembers] = useState([]);
+  const [roomCreator, setRoomCreator] = useState("");
 
   return (
     <ChatContext.Provider
@@ -13,9 +15,13 @@ export const ChatProvider = ({ children }) => {
         roomId,
         currentUser,
         connected,
+        roomMembers,
+        roomCreator,
         setRoomId,
         setCurrentUser,
         setConnected,
+        setRoomMembers,
+        setRoomCreator,
       }}
     >
       {children}

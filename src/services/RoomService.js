@@ -62,3 +62,20 @@ export const getRoomMembers = async (roomId) => {
 
   return response.data;
 };
+
+export const leaveRoomApi = async (roomId, username) => {
+  try {
+    const response = await httpClient.post(
+      `/api/v1/rooms/${encodeURIComponent(roomId)}/leave?username=${encodeURIComponent(username)}`
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 405) {
+      const response = await httpClient.delete(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}/leave?username=${encodeURIComponent(username)}`
+      );
+      return response.data;
+    }
+    throw error;
+  }
+};
